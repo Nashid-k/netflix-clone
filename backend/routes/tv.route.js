@@ -3,9 +3,6 @@ import {getTrendingTv,getTvTrailers,getTvDetails,getSimilarTvs,getTvsByCategory}
 const router = express.Router();
 
 
-
-
-
 router.get("/trending",getTrendingTv)
 router.get("/:id/trailers",getTvTrailers)
 router.get("/:id/details",getTvDetails)
