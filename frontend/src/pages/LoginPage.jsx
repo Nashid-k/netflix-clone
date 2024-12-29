@@ -1,16 +1,17 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../store/authUser";
 
 export const LoginPage = () => {
-  
-  const [email,setEmail] = useState("");
-  const [password,setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleLogin = (e)=>{
+  const { login } = useAuthStore();
+
+  const handleLogin = (e) => {
     e.preventDefault();
-    console.log(email,password);
-    
-  }
+    login({ email, password });
+  };
   return (
     <div className="h-screen w-full hero-bg">
       <header className="max-w-6xl mx-auto flex items-center justify-between p-4">
@@ -38,11 +39,9 @@ export const LoginPage = () => {
                 placeholder="your@example.com"
                 id="email"
                 value={email}
-                onChange={(e)=>setEmail(e.target.value)}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-
-
 
             <div>
               <label
@@ -57,7 +56,7 @@ export const LoginPage = () => {
                 placeholder="******"
                 id="password"
                 value={password}
-                onChange={(e)=>setPassword(e.target.value)}
+                onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
@@ -66,13 +65,13 @@ export const LoginPage = () => {
             </button>
           </form>
           <div className="text-center text-gray-400">
-            Don't have an account ? {" "}
+            Don't have an account ?{" "}
             <Link to={"/signup"} className="text-red-500 hover:underline">
-                Sign up
+              Sign up
             </Link>
           </div>
         </div>
       </div>
     </div>
   );
-}
+};
