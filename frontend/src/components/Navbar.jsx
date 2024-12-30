@@ -7,82 +7,94 @@ import { useContentStore } from "../store/content.js";
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const { user, logout } = useAuthStore();
-
   const togglerMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
   const { setContentType } = useContentStore();
 
   return (
-    <header className="max-w-6xl mx-auto flex flex-wrap items-center justify-between p-4 h-20">
+    <header className=" flex flex-wrap items-center justify-between p-4 h-20">
       <div className="flex items-center gap-10 z-50">
+        
+        
         <Link to={"/"}>
           <img
             src="/netflix-logo.png"
             alt="Netflix Logo"
-            className="w-32 sm:w-40"
+            className="w-24 md:w-28 hover:opacity-80 transition-opacity duration-200"
           />
         </Link>
 
-        {/*Desktop navbar items*/}
-
-        <div className="hidden sm:flex gap-2 items-center">
+        {/* Desktop navbar items */}
+        <div className="hidden sm:flex gap-4 items-center">
           <Link
             to={"/"}
-            className="hover:underline"
+            className="hover:text-gray-400 transition-all duration-300"
             onClick={() => setContentType("movie")}
           >
             Movies
           </Link>
           <Link
             to={"/"}
-            className="hover:underline"
+            className="hover:text-gray-400 transition-all duration-300"
             onClick={() => setContentType("tv")}
           >
-            Tv Shows
+            TV Shows
           </Link>
-          <Link to={"/history"} className="hover:underline">
+          <Link
+            to={"/history"}
+            className="hover:text-gray-400 transition-all duration-300"
+          >
             Search History
           </Link>
         </div>
       </div>
 
-      <div className="flex gap-2 items-center z-50">
+      {/* Navbar actions */}
+      <div className="flex gap-4 items-center z-50">
         <Link to={"/history"}>
-          <Search className="size-6 cursor-pointer" />
+          <Search className="size-6 cursor-pointer hover:text-gray-400 transition-colors duration-300" />
         </Link>
+
+        {/* Profile image with hover effect */}
         <img
           src={user.image}
           alt="Avatar"
-          className="h-8 rounded cursor-pointer"
+          className="h-8 rounded cursor-pointer hover:opacity-80 transition-opacity duration-300"
         />
-        <LogOut className="size-6 cursor-pointer" onClick={logout} />
 
+        <LogOut
+          className="size-6 cursor-pointer hover:text-gray-400 transition-colors duration-300"
+          onClick={logout}
+        />
+
+        {/* Mobile menu button */}
         <div className="sm:hidden">
-          <Menu className="size-6 cursor-pointer" onClick={togglerMobileMenu} />
+          <Menu
+            className="size-6 cursor-pointer hover:text-gray-400 transition-colors duration-300"
+            onClick={togglerMobileMenu}
+          />
         </div>
       </div>
 
-      {/*Mobile navbar items*/}
-
+      {/* Mobile navbar items */}
       {isMobileMenuOpen && (
-        <div className="w-full sm:hidden mt-4 z-50 bg-black border rounded border-gray-800">
+        <div className="w-full sm:hidden mt-4 z-50 bg-black border-t border-gray-800 rounded">
           <Link
             to={"/"}
-            className="block hover:underline p-2"
+            className="block p-2 text-white hover:bg-gray-700 transition-colors duration-300"
             onClick={togglerMobileMenu}
           >
             Movies
           </Link>
           <Link
             to={"/"}
-            className="block hover:underline p-2"
+            className="block p-2 text-white hover:bg-gray-700 transition-colors duration-300"
             onClick={togglerMobileMenu}
           >
-            Tv Shows
+            TV Shows
           </Link>
           <Link
-            to={"/search"}
-            className="block hover:underline p-2"
+            to={"/history"}
+            className="block p-2 text-white hover:bg-gray-700 transition-colors duration-300"
             onClick={togglerMobileMenu}
           >
             Search History
@@ -94,3 +106,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+

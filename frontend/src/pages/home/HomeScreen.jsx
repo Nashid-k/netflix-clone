@@ -11,7 +11,6 @@ import {
 import { useContentStore } from "../../store/content.js";
 import { useState } from "react";
 
-
 const HomeScreen = () => {
   const { trendigContent } = useGetTrendingContent();
   const { contentType } = useContentStore();
@@ -29,13 +28,15 @@ const HomeScreen = () => {
     <>
       <div className="relative h-screen text-white">
         <Navbar />
-        {imageLoading && (<div className="absolute top-0 left-0 w-full h-full bg-black/70 items-center justify-center -z-10 shimmer" />)}
+        {imageLoading && (
+          <div className="absolute top-0 left-0 w-full h-full bg-black/70 items-center justify-center -z-10 shimmer" />
+        )}
 
         <img
           src={ORIGINAL_IMG_BASE_URL + trendigContent?.backdrop_path}
           alt="Hero-img"
           className="absolute top-0 left-0 w-full h-full object-cover -z-50"
-          onLoad={()=>setImageLoading(false)}
+          onLoad={() => setImageLoading(false)}
         />
         <div
           className="absolute top-0 left-0 w-full h-full bg-black/50 -z-50"
@@ -63,18 +64,21 @@ const HomeScreen = () => {
           </div>
 
           <div className="flex mt-8">
+            {/* Play Button */}
             <Link
               to={`/watch/${trendigContent?.id}`}
-              className="bg-white hover:bg-white/80 text-black font-bold py-2 px-4 rounded mr-4 flex items-center"
+              className="bg-white hover:bg-white/80 text-black font-bold py-2 px-4 rounded mr-4 flex items-center transition-all duration-300 ease-in-out transform hover:scale-105"
             >
-              <Play className="size-6  mr-2 fill-black " />
+              <Play className="size-6 mr-2 fill-black" />
               Play
             </Link>
+
+            {/* Info Button */}
             <Link
               to={`/watch/${trendigContent?.id}`}
-              className="bg-gray-500/70 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center"
+              className="bg-gray-500/70 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center transition-all duration-300 ease-in-out transform hover:scale-105"
             >
-              <Info className="size-6  mr-2" />
+              <Info className="size-6 mr-2" />
               More Info
             </Link>
           </div>
