@@ -1,101 +1,139 @@
-import { Link } from "react-router-dom";
-import Navbar from "../../components/Navbar.jsx";
-import { Info, Play } from "lucide-react";
-import useGetTrendingContent from "../../hooks/useGetTrendingContent.jsx";
-import MovieSlider from "../../components/MovieSlider.jsx";
-import {
-  MOVIE_CATEGORIES,
-  ORIGINAL_IMG_BASE_URL,
-  TV_CATEGORIES,
-} from "../../utils/constants.js";
-import { useContentStore } from "../../store/content.js";
-import { useState } from "react";
+import { useState, useEffect, memo } from "react"; // Added useEffect
+import Navbar from "../../components/Navbar";
+import { useGetTrendingContent } from "../../hooks/useGetTrendingContent";
+import { useContentStore } from "../../store/content";
+import { VideoPlayer } from "../../components/VideoPlayer/VideoPlayer";
+import { ContentSection } from "../../components/ContentSection/ContentSection";
+import { LoadingShimmer } from "../../components/common/LoadingShimmer";
+import { GradientOverlays } from "../../components/common/GradientOverlays";
+import MovieSlider from "../../components/MovieSlider/MovieSlider";
+import InfoModal from "../../components/InfoModal/InfoModal";
+import { MOVIE_CATEGORIES, TV_CATEGORIES } from "../../utils/constants";
 
-const HomeScreen = () => {
-  const { trendigContent } = useGetTrendingContent();
+const HomeScreen = memo(() => {
+  const { trendingContent, trailers } = useGetTrendingContent();
   const { contentType } = useContentStore();
-  const [imageLoading, setImageLoading] = useState(true);
 
-  if (!trendigContent)
+  const [states, setStates] = useState({
+    imageLoading: true,
+    showTrailer: false,
+    showPoster: true,
+    isMuted: true,
+    trailerLoading: false,
+    showInfoModal: false,
+    isModalClosing: false,
+  });
+
+  // Reset states when content changes
+  useEffect(() => {
+    if (trendingContent) {
+      setStates(prev => ({
+        ...prev,
+        showTrailer: false,
+        showPoster: true,
+        imageLoading: true,
+        isMuted: true,
+        trailerLoading: false,
+      }));
+    }
+  }, [contentType, trendingContent]);
+
+  // Auto-play trailer after delay
+  useEffect(() => {
+    let timer;
+    if (!states.imageLoading && trailers?.length > 0 && states.showPoster) {
+      console.log("Setting up trailer timer");
+      timer = setTimeout(() => {
+        console.log("Starting trailer playback");
+        setStates(prev => ({
+          ...prev,
+          trailerLoading: true,
+          showTrailer: true,
+          showPoster: false,
+        }));
+      }, 6000);
+    }
+    return () => {
+      if (timer) {
+        clearTimeout(timer);
+      }
+    };
+  }, [states.imageLoading, trailers, states.showPoster]);
+
+  // Handle Info Modal
+  const handleInfoClick = (e) => {
+    e?.preventDefault();
+    setStates(prev => ({ ...prev, showInfoModal: true }));
+  };
+
+  const handleCloseModal = () => {
+    setStates(prev => ({ ...prev, isModalClosing: true }));
+    setTimeout(() => {
+      setStates(prev => ({
+        ...prev,
+        showInfoModal: false,
+        isModalClosing: false,
+      }));
+    }, 500);
+  };
+
+  // Show loading state if no content
+  if (!trendingContent) {
     return (
-      <div className="h-screen text-white relative">
+      <div className="h-screen bg-black">
         <Navbar />
-        <div className="absolute top-0 left-0 w-full h-full bg-black/70 items-center justify-center -z-10 shimmer" />
+        <LoadingShimmer show={true} />
       </div>
     );
+  }
 
   return (
     <>
-      <div className="relative h-screen text-white">
+      <div className="relative h-screen text-white overflow-hidden">
         <Navbar />
-        {imageLoading && (
-          <div className="absolute top-0 left-0 w-full h-full bg-black/70 items-center justify-center -z-10 shimmer" />
-        )}
+        <LoadingShimmer show={states.imageLoading} />
 
-        <img
-          src={ORIGINAL_IMG_BASE_URL + trendigContent?.backdrop_path}
-          alt="Hero-img"
-          className="absolute top-0 left-0 w-full h-full object-cover -z-50"
-          onLoad={() => setImageLoading(false)}
-        />
-        <div
-          className="absolute top-0 left-0 w-full h-full bg-black/50 -z-50"
-          aria-hidden="true"
-        />
-        <div className="absolute top-0 left-0 w-full h-full flex flex-col justify-center px-8 md:px-16 lg:px-32">
-          <div className="bg-gradient-to-b from-black via-transparent to-transparent absolute w-full h-full top-0 left-0 -z-50" />
-
-          <div className="max-w-2xl">
-            <h1 className="mt-4 text-6xl font-extrabold text-balance">
-              {trendigContent?.title || trendigContent?.name}
-            </h1>
-            <p className="mt-2 text-lg">
-              {trendigContent?.release_date?.split("-")[0] ||
-                trendigContent?.first_air_date.split("-")[0]}{" "}
-              | {trendigContent?.adult ? "18+" : "PG-13"}
-            </p>
-            <p className="mt-4 text-lg">
-              {trendigContent?.overview
-                ? trendigContent.overview.length > 200
-                  ? trendigContent.overview.slice(0, 200) + "..."
-                  : trendigContent.overview
-                : "Overview not available"}
-            </p>
-          </div>
-
-          <div className="flex mt-8">
-            {/* Play Button */}
-            <Link
-              to={`/watch/${trendigContent?.id}`}
-              className="bg-white hover:bg-white/80 text-black font-bold py-2 px-4 rounded mr-4 flex items-center transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <Play className="size-6 mr-2 fill-black" />
-              Play
-            </Link>
-
-            {/* Info Button */}
-            <Link
-              to={`/watch/${trendigContent?.id}`}
-              className="bg-gray-500/70 hover:bg-gray-500 text-white py-2 px-4 rounded flex items-center transition-all duration-300 ease-in-out transform hover:scale-105"
-            >
-              <Info className="size-6 mr-2" />
-              More Info
-            </Link>
-          </div>
+        {/* Background Content */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          <VideoPlayer
+            content={trendingContent}
+            trailers={trailers}
+            show={states.showTrailer}
+            isMuted={states.isMuted}
+            trailerLoading={states.trailerLoading}
+            setStates={setStates}
+          />
         </div>
+
+        <GradientOverlays />
+
+        {/* Content Section */}
+        <ContentSection 
+          content={trendingContent} 
+          onInfoClick={handleInfoClick}
+        />
+
+        {/* Info Modal */}
+        {states.showInfoModal && (
+          <InfoModal
+            content={trendingContent}
+            onClose={handleCloseModal}
+            isClosing={states.isModalClosing}
+          />
+        )}
       </div>
 
+      {/* Movie/TV Show Categories */}
       <div className="flex flex-col gap-10 bg-black py-10">
-        {contentType === "movie"
-          ? MOVIE_CATEGORIES.map((category) => (
-              <MovieSlider key={category} category={category} />
-            ))
-          : TV_CATEGORIES.map((category) => (
-              <MovieSlider key={category} category={category} />
-            ))}
+        {(contentType === "movie" ? MOVIE_CATEGORIES : TV_CATEGORIES).map(
+          (category) => (
+            <MovieSlider key={category} category={category} />
+          )
+        )}
       </div>
     </>
   );
-};
+});
 
+HomeScreen.displayName = "HomeScreen";
 export default HomeScreen;
