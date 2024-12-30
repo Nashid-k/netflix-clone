@@ -47,7 +47,7 @@ const Navbar = () => {
       </div>
 
       <div className="flex gap-2 items-center z-50">
-        <Link to={"/search"}>
+        <Link to={"/history"}>
           <Search className="size-6 cursor-pointer" />
         </Link>
         <img
