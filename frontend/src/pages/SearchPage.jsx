@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import InfoModal from '../components/InfoModal/InfoModal';
+import { History } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Animation variants
 const container = {
@@ -124,10 +126,25 @@ export const SearchPage = () => {
         setResults([]);
         setSearchTerm("");
     };
-
-    const handleInfoClick = (content) => {
-        setSelectedContent(content);
-        setShowModal(true);
+    const handleInfoClick = async (content) => {
+        try {
+            // First set the modal content and show it
+            setSelectedContent(content);
+            setShowModal(true);
+    
+            // Then save to search history
+            await axios.post('api/v1/search/history', {
+                id: content.id,
+                image: content.poster_path || content.profile_path,
+                title: content.title || content.name,
+                searchType: activeTab
+            });
+        } catch (error) {
+            console.error('Error saving to history:', error);
+            // Still show the modal even if saving to history fails
+            setSelectedContent(content);
+            setShowModal(true);
+        }
     };
 
     const performSearch = async () => {
@@ -217,22 +234,31 @@ export const SearchPage = () => {
                 </motion.div>
 
                 {/* Search Input */}
-                <motion.div 
-                    className="flex gap-3 items-stretch mb-12 max-w-3xl mx-auto"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                >
-                    <input 
-                        type="text" 
-                        className="w-full p-4 rounded-full bg-gray-800/50 border border-gray-700 
-                                 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 
-                                 transition-all duration-300"
-                        placeholder={`Search for ${activeTab === "tv" ? "TV shows" : activeTab + "s"}...`}
-                        value={searchTerm} 
-                        onChange={(e) => setSearchTerm(e.target.value)} 
-                    />
-                </motion.div>
+              <motion.div 
+    className="relative max-w-3xl mx-auto mb-12"  // Changed to relative positioning
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ delay: 0.3 }}
+>
+    <input 
+        type="text" 
+        className="w-full p-4 pr-32 rounded-full bg-gray-800/50 border border-gray-700 
+                 focus:outline-none focus:border-red-500 focus:ring-2 focus:ring-red-500/20 
+                 transition-all duration-300"
+        placeholder={`Search for ${activeTab === "tv" ? "TV shows" : activeTab + "s"}...`}
+        value={searchTerm} 
+        onChange={(e) => setSearchTerm(e.target.value)} 
+    />
+    <Link
+        to="/history"
+        className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2 
+                 px-4 py-2 rounded-full bg-gray-700/50 hover:bg-gray-700 
+                 transition-all duration-300 text-gray-300 hover:text-white"
+    >
+        <History className="w-4 h-4" />
+        <span className="text-sm">History</span>
+    </Link>
+</motion.div>
 
                 {/* Results */}
                 <AnimatePresence mode="wait">

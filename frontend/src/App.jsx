@@ -3,13 +3,13 @@ import { SignUpPage } from "./pages/SignUpPage";
 import { WatchPage } from "./pages/WatchPage";
 import { LoginPage } from "./pages/LoginPage";
 import { HomePage } from "./pages/home/HomePage";
+import { SearchPage } from "./pages/SearchPage";
+import { SearchHistory } from "./pages/SearchHistory"; // Add this import
 import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authUser.js";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
-import { SearchPage } from "./pages/SearchPage";
-// Scroll Restoration Component
 import { useLocation } from "react-router-dom";
 
 function ScrollToTop() {
@@ -24,8 +24,6 @@ function ScrollToTop() {
 
 function App() {
   const { user, isCheckingAuth, authCheck } = useAuthStore();
-
-  console.log("Auth user is here:", user);
 
   // Check authentication status on mount
   useEffect(() => {
@@ -45,11 +43,10 @@ function App() {
 
   return (
     <>
-
       <ScrollToTop />
-      
 
       <Routes>
+        {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route
           path="/login"
@@ -59,6 +56,8 @@ function App() {
           path="/signup"
           element={!user ? <SignUpPage /> : <Navigate to="/" />}
         />
+
+        {/* Protected Routes */}
         <Route
           path="/watch/:id"
           element={user ? <WatchPage /> : <Navigate to="/login" />}
@@ -67,8 +66,11 @@ function App() {
           path="/search"
           element={user ? <SearchPage /> : <Navigate to="/login" />}
         />
+        <Route
+          path="/history"
+          element={user ? <SearchHistory /> : <Navigate to="/login" />}
+        />
       </Routes>
-      
 
       <Footer />
       <Toaster />
