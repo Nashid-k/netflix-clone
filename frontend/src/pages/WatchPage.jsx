@@ -6,6 +6,36 @@ import Navbar from "../components/Navbar";
 import { ChevronLeft, ChevronRight, Play, Info, X, Star } from "lucide-react";
 import ReactPlayer from "react-player";
 import { ORIGINAL_IMG_BASE_URL, SMALL_IMG_BASE_URL } from "../utils/constants";
+const calculateContentSimilarity = (mainContent, compareContent) => {
+  // Handle cases where genres might be undefined
+  const mainGenres = mainContent?.genres || [];
+  const compareGenres = compareContent?.genres || [];
+  
+  // Calculate basic genre similarity
+  const mainGenreIds = new Set(mainGenres.map(g => g.id));
+  const compareGenreIds = new Set(compareGenres.map(g => g.id));
+  const commonGenres = [...mainGenreIds].filter(id => compareGenreIds.has(id));
+  
+  let score = commonGenres.length / Math.max(mainGenreIds.size, compareGenreIds.size) || 0;
+
+  // Boost score for specific genre matches (animation, action, thriller, etc.)
+  const mainGenreNames = mainGenres.map(g => g.name.toLowerCase());
+  const compareGenreNames = compareGenres.map(g => g.name.toLowerCase());
+
+  // Priority genres get higher scores
+  const priorityGenres = ['animation', 'anime', 'action', 'thriller'];
+  const hasMatchingPriorityGenre = priorityGenres.some(genre => 
+    mainGenreNames.includes(genre) && compareGenreNames.includes(genre)
+  );
+
+  if (hasMatchingPriorityGenre) {
+    score += 0.5;
+  }
+
+  return score;
+};
+
+
 
 const formatReleaseDate = (date) => {
   if (!date) return "";
@@ -146,7 +176,6 @@ export const WatchPage = () => {
   });
   const { contentType } = useContentStore();
 
-  // Fetch all data in parallel
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -158,10 +187,28 @@ export const WatchPage = () => {
           axios.get(`/api/v1/${contentType}/${id}/similar`),
         ]);
 
+        const mainContent = contentRes.data.content;
+        
+        // Sort similar content by genre similarity
+        const sortedSimilarContent = similarRes.data.similar
+          .filter(item => item.poster_path)
+          .map(item => ({
+            ...item,
+            similarityScore: calculateContentSimilarity(mainContent, item)
+          }))
+          .sort((a, b) => {
+            // First sort by similarity score
+            if (b.similarityScore !== a.similarityScore) {
+              return b.similarityScore - a.similarityScore;
+            }
+            // Then by vote average as a tiebreaker
+            return (b.vote_average || 0) - (a.vote_average || 0);
+          });
+
         setData({
           trailers: trailersRes.data.trailers || [],
-          content: contentRes.data.content || {},
-          similarContent: similarRes.data.similar || [],
+          content: mainContent,
+          similarContent: sortedSimilarContent,
           selectedContent: null,
         });
       } catch (error) {
@@ -173,7 +220,6 @@ export const WatchPage = () => {
 
     fetchData();
   }, [contentType, id]);
-
   const handleInfoClick = (content) => {
     setData((prev) => ({ ...prev, selectedContent: content }));
     setStates((prev) => ({ ...prev, showModal: true }));
@@ -362,21 +408,34 @@ export const WatchPage = () => {
 
         {/* Similar Content Section */}
         <div className="mt-12">
-          <h2 className="text-3xl font-bold mb-8 text-center">
-            Similar Content
-          </h2>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {data.similarContent
-              .filter((item) => item.poster_path)
-              .map((item) => (
-                <ContentCard
-                  key={item.id}
-                  item={item}
-                  onInfoClick={handleInfoClick}
-                />
-              ))}
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          Similar Content
+        </h2>
+        
+        {/* Add Genre Tags */}
+        {data.content?.genres && (
+          <div className="flex flex-wrap gap-2 justify-center mb-6">
+            {data.content.genres.map(genre => (
+              <span 
+                key={genre.id}
+                className="px-3 py-1 rounded-full bg-red-600/20 text-red-400 text-sm"
+              >
+                {genre.name}
+              </span>
+            ))}
           </div>
+        )}
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
+          {data.similarContent.map((item) => (
+            <ContentCard
+              key={item.id}
+              item={item}
+              onInfoClick={handleInfoClick}
+            />
+          ))}
         </div>
+      </div>
       </div>
 
       {/* Info Modal */}

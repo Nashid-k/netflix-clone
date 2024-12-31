@@ -32,6 +32,27 @@ export async function searchPerson(req,res) {
 }
 
 
+export async function getPersonDetails(req, res) {
+    const { id } = req.params;
+    try {
+        const [details, credits] = await Promise.all([
+            fetchFromTMDB(`https://api.themoviedb.org/3/person/${id}?language=en-US`),
+            fetchFromTMDB(`https://api.themoviedb.org/3/person/${id}/combined_credits?language=en-US`)
+        ]);
+
+        res.status(200).json({
+            success: true,
+            content: {
+                ...details,
+                credits: credits
+            }
+        });
+    } catch (error) {
+        console.log('Error in getPersonDetails controller');
+        res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+}
+
 
 export async function searchMovie(req,res) {
     const {query} = req.params;

@@ -8,7 +8,7 @@ import { Toaster } from "react-hot-toast";
 import { useAuthStore } from "./store/authUser.js";
 import { useEffect } from "react";
 import { Loader } from "lucide-react";
-
+import { SearchPage } from "./pages/SearchPage";
 // Scroll Restoration Component
 import { useLocation } from "react-router-dom";
 
@@ -45,10 +45,10 @@ function App() {
 
   return (
     <>
-      {/* Scroll Restoration */}
+
       <ScrollToTop />
       
-      {/* Routes */}
+
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route
@@ -63,9 +63,13 @@ function App() {
           path="/watch/:id"
           element={user ? <WatchPage /> : <Navigate to="/login" />}
         />
+        <Route
+          path="/search"
+          element={user ? <SearchPage /> : <Navigate to="/login" />}
+        />
       </Routes>
       
-      {/* Footer and Toaster */}
+
       <Footer />
       <Toaster />
     </>

@@ -48,7 +48,7 @@ const Navbar = () => {
 
       {/* Navbar actions */}
       <div className="flex gap-4 items-center z-50">
-        <Link to={"/history"}>
+        <Link to={"/search"}>
           <Search className="size-6 cursor-pointer hover:text-red-600 transition-colors duration-300" />
         </Link>
 
