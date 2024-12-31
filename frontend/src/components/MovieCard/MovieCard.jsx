@@ -2,17 +2,18 @@ import { useState } from "react";
 import { Info, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { SMALL_IMG_BASE_URL } from "../../utils/constants";
-import  InfoModal  from "../InfoModal/InfoModal";
+import InfoModal from "../InfoModal/InfoModal";
 
 const MovieCard = ({ movie }) => {
   const [showModal, setShowModal] = useState(false);
   const [isModalClosing, setIsModalClosing] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const isMobile = window.innerWidth <= 768;
 
   const handleInfoClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
-    setShowModal(true); // This opens the modal
+    setShowModal(true);
   };
 
   const handleCloseModal = () => {
@@ -22,65 +23,86 @@ const MovieCard = ({ movie }) => {
       setIsModalClosing(false);
     }, 1000);
   };
+
   return (
     <>
       <div
-        className="relative min-w-[200px] transform transition-all duration-700 
-                   ease-in-out hover:scale-110 hover:z-10"
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
+        className={`relative w-full h-[120px] md:h-[160px] rounded-lg overflow-hidden
+                   ${!isMobile ? `transform transition-all duration-500 
+                   ease-[cubic-bezier(0.4,0.0,0.2,1)] hover:scale-[1.5] 
+                   hover:z-50 origin-center` : ''}`}
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => !isMobile && setIsHovered(false)}
       >
+        {/* Base Image */}
         <img
           src={SMALL_IMG_BASE_URL + movie.backdrop_path}
           alt={movie.title || movie.name}
-          className="rounded-lg object-cover w-full h-[120px]"
+          className="w-full h-full object-cover rounded-lg"
           loading="lazy"
         />
         
-        {isHovered && (
-          <div className="absolute inset-0 bg-black/70 rounded-lg flex flex-col justify-between p-3">
-            <h3 className="text-sm font-semibold line-clamp-2">
+        {/* Hover Overlay - Only on desktop */}
+        {!isMobile && (
+          <div 
+            className={`absolute inset-0 bg-gradient-to-t from-black/80 
+                       via-black/30 to-transparent rounded-lg flex flex-col 
+                       justify-between p-4 transition-opacity duration-300
+                       ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+          >
+            <h3 className="text-base font-semibold line-clamp-2 text-white 
+                         drop-shadow-lg">
               {movie.title || movie.name}
             </h3>
             
             <div className="flex items-center justify-between">
-              <div className="flex gap-2">
+              <div className="flex gap-3">
                 <Link
                   to={`/watch/${movie.id}`}
-                  className="bg-white hover:bg-white/80 text-black p-1.5 rounded-full 
-                           transition-all duration-300 hover:scale-110"
+                  className="bg-white hover:bg-white/90 text-black p-2 
+                           rounded-full transition-all duration-300 
+                           hover:scale-110"
                 >
-                  <Play className="w-4 h-4 fill-black" />
+                  <Play className="w-5 h-5 fill-black" />
                 </Link>
                 <button
                   onClick={handleInfoClick}
-                  className="bg-gray-500/70 hover:bg-gray-500 p-1.5 rounded-full 
-                           transition-all duration-300 hover:scale-110"
+                  className="bg-neutral-500/50 hover:bg-neutral-500 p-2 
+                           rounded-full transition-all duration-300 
+                           hover:scale-110"
                 >
-                  <Info className="w-4 h-4" />
+                  <Info className="w-5 h-5" />
                 </button>
               </div>
               
-              <div className="text-xs">
+              <div className="text-sm text-white drop-shadow-lg">
                 {movie.release_date?.split("-")[0] ||
                   movie.first_air_date?.split("-")[0]}
               </div>
             </div>
           </div>
         )}
+
+        {/* Mobile-only overlay */}
+        {isMobile && (
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t 
+                         from-black/80 to-transparent p-2">
+            <h3 className="text-sm font-semibold text-white drop-shadow-lg 
+                         line-clamp-1">
+              {movie.title || movie.name}
+            </h3>
+          </div>
+        )}
       </div>
 
       {showModal && (
         <InfoModal
-        show={showModal} // Add this prop
-        content={movie}
-        onClose={handleCloseModal}
-        isClosing={isModalClosing}
-      />
+          content={movie}
+          onClose={handleCloseModal}
+          isClosing={isModalClosing}
+        />
       )}
     </>
   );
 };
-
-
 export default MovieCard;

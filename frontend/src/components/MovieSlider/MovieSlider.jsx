@@ -45,10 +45,16 @@ const MovieSlider = memo(({ category }) => {
     };
   }, [category, contentType]);
 
+
+
   const scrollLeft = () => {
     if (sliderRef.current) {
+      const containerWidth = sliderRef.current.offsetWidth;
+      const cardWidth = window.innerWidth <= 768 ? 200 : 280; // Responsive card width
+      const cardsToScroll = Math.floor(containerWidth / cardWidth);
+      
       sliderRef.current.scrollBy({
-        left: -sliderRef.current.offsetWidth,
+        left: -(cardWidth * cardsToScroll),
         behavior: "smooth",
       });
     }
@@ -56,50 +62,74 @@ const MovieSlider = memo(({ category }) => {
 
   const scrollRight = () => {
     if (sliderRef.current) {
+      const containerWidth = sliderRef.current.offsetWidth;
+      const cardWidth = window.innerWidth <= 768 ? 200 : 280; // Responsive card width
+      const cardsToScroll = Math.floor(containerWidth / cardWidth);
+      
       sliderRef.current.scrollBy({
-        left: sliderRef.current.offsetWidth,
+        left: cardWidth * cardsToScroll,
         behavior: "smooth",
       });
     }
   };
 
-  if (loading) {
-    return <LoadingShimmer count={6} />;
-  }
+  if (loading) return <LoadingShimmer count={6} />;
 
   return (
     <div
-      className="text-white px-8 md:px-16 lg:px-32 relative"
+      className="relative py-4 md:py-6"
       onMouseEnter={() => setShowArrows(true)}
       onMouseLeave={() => setShowArrows(false)}
     >
-      <h2 className="text-xl font-semibold mb-4">
+      {/* Title */}
+      <h2 className="text-xl md:text-2xl font-semibold mb-4 md:mb-6 px-4 md:px-12 text-white">
         {formattedCategoryName} {formattedContentType}
       </h2>
 
       <div className="relative group">
-        {showArrows && movies.length > 0 && (
+        {/* Navigation Arrows - Only show on desktop */}
+        {showArrows && movies.length > 0 && window.innerWidth > 768 && (
           <>
             <NavigationArrow 
               direction="left" 
               onClick={scrollLeft} 
-              className="-left-4 md:-left-8"
+              className="hidden md:block absolute left-3 md:left-8 z-50"
             />
             <NavigationArrow 
               direction="right" 
               onClick={scrollRight} 
-              className="-right-4 md:-right-8"
+              className="hidden md:block absolute right-3 md:right-8 z-50"
             />
           </>
         )}
 
-        <div
-          ref={sliderRef}
-          className="flex items-center space-x-4 overflow-x-scroll scrollbar-hide scroll-smooth"
-        >
-          {movies.map((movie) => (
-            <MovieCard key={movie.id} movie={movie} />
-          ))}
+        {/* Slider Container */}
+        <div className="relative px-4 md:px-20">
+          <div
+            ref={sliderRef}
+            className="flex gap-2 md:gap-6 overflow-x-scroll overflow-y-visible
+                       scrollbar-hide scroll-smooth md:py-[80px] md:-my-[80px]"
+            style={{
+              scrollSnapType: 'x mandatory',
+              scrollPadding: '0 16px'
+            }}
+          >
+            {/* Left Spacer - Only on desktop */}
+            <div className="hidden md:block shrink-0 w-4 md:w-8" />
+            
+            {movies.map((movie) => (
+              <div 
+                key={movie.id}
+                className="relative shrink-0 w-[200px] md:w-[280px] 
+                         scroll-snap-align-start"
+              >
+                <MovieCard movie={movie} />
+              </div>
+            ))}
+
+            {/* Right Spacer - Only on desktop */}
+            <div className="hidden md:block shrink-0 w-4 md:w-8" />
+          </div>
         </div>
       </div>
     </div>

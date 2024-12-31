@@ -7,21 +7,21 @@ const InfoModal = ({ content, onClose, isClosing }) => {
   return (
     <div
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 
-                transition-all duration-700 ${
-                  isClosing
-                    ? "animate-backdrop-fade-out"
-                    : "animate-backdrop-fade-in"
-                }`}
+                  transition-all duration-700 ${
+                    isClosing
+                      ? "animate-backdrop-fade-out"
+                      : "animate-backdrop-fade-in"
+                  }`}
       style={{ backgroundColor: "rgba(0, 0, 0, 0.8)" }}
       onClick={onClose}
     >
       <div
         className={`relative bg-zinc-900 rounded-xl max-w-4xl w-full 
-                   overflow-hidden ${
-                     isClosing 
-                       ? "animate-modal-slide-out" 
-                       : "animate-modal-slide-in"
-                   }`}
+                    overflow-hidden ${
+                      isClosing 
+                        ? "animate-modal-slide-out" 
+                        : "animate-modal-slide-in"
+                    }`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header with Background Image */}
@@ -32,39 +32,47 @@ const InfoModal = ({ content, onClose, isClosing }) => {
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t 
-                        from-zinc-900 via-zinc-900/50 to-transparent" />
+                         from-zinc-900 via-zinc-900/50 to-transparent" />
+          
+          {/* Close Button */}
           <button
             onClick={onClose}
             className="absolute top-4 right-4 bg-black/50 p-2 
-                     rounded-full hover:bg-black/70 
-                     transition-all duration-300 hover:scale-110"
+                      rounded-full hover:bg-black/70 
+                      transition-all duration-300 hover:scale-110"
           >
-            <X className="w-6 h-6" />
+            <X className="w-6 h-6 text-white" />
           </button>
+
+          {/* Title on Image */}
+          <div className="absolute bottom-0 left-0 right-0 p-8">
+            <h2 className="text-3xl font-bold text-white drop-shadow-lg">
+              {content?.title || content?.name}
+            </h2>
+          </div>
         </div>
 
         {/* Modal Content */}
-        <div className="p-8 space-y-6">
-          <h2 className="text-3xl font-bold">
-            {content?.title || content?.name}
-          </h2>
-
-          <div className="flex flex-wrap items-center gap-6">
-            <ContentMetadata content={content} />
+        <div className="p-8 space-y-6 text-white">
+          {/* Metadata */}
+          <div className="flex flex-wrap items-center gap-4 text-white/90">
+            <ContentMetadata content={content} className="text-white" />
           </div>
 
-          <p className="text-gray-300 leading-relaxed text-lg">
+          {/* Overview */}
+          <p className="text-white/80 leading-relaxed text-lg">
             {content?.overview}
           </p>
 
+          {/* Action Buttons */}
           <div className="flex gap-4 pt-4">
             <Link
               to={`/watch/${content?.id}`}
               className="bg-white hover:bg-white/90 text-black px-8 py-3 
-                       rounded-lg flex items-center transition-all duration-300 
-                       hover:scale-105 font-semibold"
+                       rounded-lg flex items-center gap-2 transition-all 
+                       duration-300 hover:scale-105 font-semibold"
             >
-              <Play className="w-5 h-5 mr-2 fill-black" />
+              <Play className="w-5 h-5 fill-black" />
               Play Now
             </Link>
           </div>
