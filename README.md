@@ -27,15 +27,13 @@ This **Netflix clone** serves as a comprehensive showcase of **TMDB (The Movie D
 - **Embedded Trailers** - Watch movie trailers directly in the app
 - **YouTube Integration** - Seamless trailer playback
 - **Trailer Quality** - HD trailer streaming
-- **Auto-play Options** - Configurable trailer auto-play
 - **Fullscreen Mode** - Immersive trailer viewing experience
 
 ### 🔍 **Advanced Search System**
 - **Multi-parameter Search** - Search by movie name, cast, or genre
 - **Real-time Filtering** - Instant search results as you type
 - **Cast-based Search** - Find movies by actor/actress names
-- **Intelligent Suggestions** - Smart search recommendations
-- **Search History** - Recent search tracking
+- **Smart Suggestions** - Search recommendations from TMDB data
 
 ### 👥 **Cast & Crew Information**
 - **Cast Profiles** - Detailed actor/actress information
@@ -57,14 +55,6 @@ This **Netflix clone** serves as a comprehensive showcase of **TMDB (The Movie D
 - **User Profiles** - Personalized user accounts
 - **Username Display** - User identification in navbar
 - **Session Management** - Persistent login sessions
-- **User Preferences** - Customizable viewing preferences
-
-### 🎬 **Streaming Features**
-- **Movie Player** - Built-in video player interface
-- **Playback Controls** - Standard video controls
-- **Quality Selection** - Multiple streaming quality options
-- **Fullscreen Mode** - Immersive viewing experience
-- **Continue Watching** - Resume from where you left off
 
 ---
 
@@ -111,8 +101,8 @@ netflix-clone/
 
 - **Node.js** (v16 or higher)
 - **MongoDB** (local installation or Atlas)
+- **TMDB API Key** (free registration required)
 - **Git** for version control
-- **Modern web browser**
 
 ### Installation
 
@@ -139,7 +129,12 @@ netflix-clone/
    npm install
    ```
 
-5. **Environment Configuration**
+5. **Get TMDB API Key**
+   - Visit [TMDB](https://www.themoviedb.org/) and create an account
+   - Go to Settings > API and request an API key
+   - Copy your API key for environment configuration
+
+6. **Environment Configuration**
    
    Create `.env` file in the backend directory:
    ```env
@@ -153,7 +148,7 @@ netflix-clone/
    PORT=5000
    NODE_ENV=development
    
-   # Movie API Configuration (TMDB)
+   # TMDB API Configuration
    TMDB_API_KEY=your-tmdb-api-key
    TMDB_BASE_URL=https://api.themoviedb.org/3
    
@@ -171,7 +166,7 @@ netflix-clone/
    VITE_TMDB_IMAGE_BASE_URL=https://image.tmdb.org/t/p/w500
    ```
 
-6. **Start the Development Servers**
+7. **Start the Development Servers**
    
    **Backend Server:**
    ```bash
@@ -185,7 +180,7 @@ netflix-clone/
    npm run dev
    ```
 
-7. **Access the Application**
+8. **Access the Application**
    - **Frontend**: `http://localhost:5173`
    - **Backend API**: `http://localhost:5000`
 
@@ -200,7 +195,6 @@ netflix-clone/
 - **Zustand** - Lightweight state management
 - **React Router** - Client-side routing
 - **Axios** - HTTP client for API calls
-- **React Query** - Data fetching and caching
 
 ### **Backend Technologies**
 - **Node.js** - JavaScript runtime
@@ -226,106 +220,118 @@ netflix-clone/
 
 ## 📱 Features in Detail
 
+### **TMDB API Integration**
+- **Movie Catalog**: Browse thousands of movies and TV shows with real data
+- **Trending Section**: Display daily and weekly trending content
+- **Genre Organization**: Movies categorized by genres from TMDB
+- **High-Quality Assets**: Movie posters, backdrops, and cast images
+- **Detailed Information**: Plot summaries, ratings, release dates, runtime
+
 ### **Search Functionality**
-- **Smart Search**: Find content by title, cast, director, or genre
-- **Autocomplete**: Real-time search suggestions
-- **Filter Options**: Advanced filtering by year, rating, genre
-- **Search History**: Keep track of recent searches
-- **No Results Handling**: Elegant empty state design
+- **Smart Search**: Find content by movie title, cast name, or director
+- **Real-time Results**: Instant search results as you type
+- **Cast Search**: Search for actors and view their complete filmography
+- **No Results Handling**: Elegant empty state when no matches found
 
-### **Movie Details Page**
-- **Comprehensive Info**: Plot, cast, crew, ratings, release date
-- **Trailer Integration**: Embedded trailer playback
-- **Cast Carousel**: Scrollable cast member showcase
-- **Similar Movies**: Recommendation engine
-- **User Reviews**: Community ratings and reviews
+### **Movie Details & Cast**
+- **Comprehensive Info**: Full movie details including plot, cast, crew
+- **Trailer Integration**: Embedded YouTube trailers with fullscreen support
+- **Cast Profiles**: Detailed actor information with biography and photos
+- **Related Movies**: Similar movie recommendations
+- **Cast Filmography**: Complete list of movies for each actor
 
-### **Cast Profile Pages**
-- **Biography**: Detailed actor/actress information
-- **Filmography**: Complete list of movies and shows
-- **Photo Gallery**: Professional photos and stills
-- **Career Statistics**: Awards, nominations, career span
+### **User Experience**
+- **Netflix UI**: Authentic Netflix-inspired design and layout
+- **Responsive Design**: Seamless experience across all devices
+- **Loading States**: Smooth loading animations and placeholders
+- **Error Handling**: User-friendly error messages and retry options
+- **Interactive Elements**: Hover effects and smooth transitions
 
-### **User Interface**
-- **Netflix Aesthetics**: Authentic color scheme and typography
-- **Responsive Design**: Seamless experience across devices
-- **Loading States**: Elegant loading animations
-- **Error Handling**: User-friendly error messages
-- **Accessibility**: WCAG compliant design
+---
+
+## 🔧 TMDB API Setup Guide
+
+### **Getting Your API Key**
+1. Visit [The Movie Database (TMDB)](https://www.themoviedb.org/)
+2. Create a free account
+3. Go to your account settings
+4. Navigate to the API section
+5. Request an API key (v3 auth)
+6. Fill out the application form
+7. Once approved, copy your API key
+
+### **API Endpoints Used**
+```javascript
+// Popular Movies
+GET /movie/popular
+
+// Search Movies
+GET /search/movie?query={query}
+
+// Movie Details
+GET /movie/{movie_id}
+
+// Movie Videos/Trailers
+GET /movie/{movie_id}/videos
+
+// Similar Movies
+GET /movie/{movie_id}/similar
+
+// Person Details
+GET /person/{person_id}
+
+// Person Movies
+GET /person/{person_id}/movie_credits
+```
 
 ---
 
 ## 🎨 UI/UX Features
 
+### **Netflix-Inspired Design**
+- **Dark Theme**: Netflix's signature dark color scheme
+- **Typography**: Netflix Sans-inspired font choices
+- **Color Palette**: Red accents with dark backgrounds
+- **Layout Structure**: Hero sections, carousels, and grid layouts
+
 ### **Interactive Elements**
-- **Hover Effects**: Movie card animations and previews
-- **Smooth Scrolling**: Fluid carousel navigation
-- **Modal Windows**: Overlay for movie details
-- **Dropdown Menus**: User profile and navigation menus
-- **Progress Indicators**: Loading and buffering states
+- **Hover Effects**: Movie card animations and info previews
+- **Smooth Scrolling**: Fluid horizontal carousels
+- **Modal Windows**: Overlay modals for movie details
+- **Navigation**: Clean navbar with user profile dropdown
+- **Loading Animations**: Skeleton screens and spinners
 
-### **Responsive Design**
+### **Responsive Behavior**
 - **Mobile First**: Optimized for mobile devices
-- **Tablet Layout**: Perfect iPad and tablet experience
-- **Desktop Experience**: Full-featured desktop interface
-- **Touch Gestures**: Swipe and tap interactions
-
----
-
-## 🔧 Configuration & Setup
-
-### **TMDB API Setup**
-1. Create account at [TMDB](https://www.themoviedb.org/)
-2. Request API key from developer section
-3. Add API key to environment variables
-4. Configure API endpoints in application
-
-### **Database Setup**
-```bash
-# Start MongoDB locally
-mongod --dbpath /path/to/your/db
-
-# Or use MongoDB Atlas (cloud)
-# Update MONGODB_URI in .env file
-```
-
-### **Development Scripts**
-```json
-{
-  "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "cd backend && npm run dev",
-    "client": "cd frontend && npm run dev",
-    "build": "cd frontend && npm run build",
-    "start": "cd backend && npm start"
-  }
-}
-```
+- **Tablet Support**: Perfect iPad and tablet experience  
+- **Desktop Layout**: Full-featured desktop interface
+- **Touch Friendly**: Swipe gestures for mobile carousels
 
 ---
 
 ## 🚀 Deployment
 
-### **Frontend Deployment (Vercel/Netlify)**
+### **Frontend Deployment (Vercel)**
 ```bash
 cd frontend
 npm run build
-# Deploy dist folder to hosting service
+# Deploy dist folder to Vercel or Netlify
 ```
 
-### **Backend Deployment (Railway/Heroku)**
+### **Backend Deployment (Railway/Render)**
 ```bash
 cd backend
-# Configure production environment variables
+# Set production environment variables
 # Deploy to cloud platform
 ```
 
-### **Production Environment Variables**
+### **Production Environment**
 ```env
 NODE_ENV=production
 MONGODB_URI=your-production-mongodb-uri
 JWT_SECRET=your-production-jwt-secret
 CLIENT_URL=https://your-frontend-domain.com
+TMDB_API_KEY=your-tmdb-api-key
 ```
 
 ---
@@ -334,57 +340,55 @@ CLIENT_URL=https://your-frontend-domain.com
 
 This project demonstrates proficiency in:
 
-- **TMDB API Integration** - Working with external movie databases
-- **Video Integration** - Implementing trailer playback functionality
-- **Modern React Patterns** - Hooks, context, custom hooks
-- **State Management** - Zustand for application state
-- **API Integration** - Third-party service integration and data handling
-- **Database Design** - MongoDB schema design for user data
-- **Authentication** - JWT-based user authentication
-- **Responsive Design** - Mobile-first development approach
-- **Search Implementation** - Building intelligent search with API data
-- **UI/UX Design** - Creating Netflix-inspired user experiences
+- **TMDB API Integration** - Working with external movie databases and handling API responses
+- **Video Integration** - Implementing trailer playback with YouTube integration
+- **Modern React Development** - Hooks, custom hooks, and component composition
+- **State Management** - Zustand for lightweight and efficient state handling
+- **RESTful API Design** - Building scalable backend APIs with Express.js
+- **Database Design** - MongoDB schema design for user authentication
+- **Responsive Web Design** - Mobile-first approach with TailwindCSS
+- **Search Implementation** - Building intelligent search with real-time filtering
+- **Authentication Systems** - JWT-based secure user authentication
+- **UI/UX Design** - Creating Netflix-inspired user interfaces
 
 ---
 
 ## 🔮 Future Enhancements
 
-- [ ] **User Watchlists** - Personal movie collections
-- [ ] **Recommendation Engine** - AI-powered suggestions
-- [ ] **Social Features** - User reviews and ratings
-- [ ] **Download Feature** - Offline viewing capability
-- [ ] **Multiple Languages** - Internationalization support
-- [ ] **Admin Panel** - Content management system
-- [ ] **Analytics Dashboard** - User behavior tracking
-- [ ] **Progressive Web App** - PWA capabilities
-- [ ] **Real-time Notifications** - Push notifications
-- [ ] **Video Streaming** - Actual video playback integration
+- [ ] **Movie Recommendations** - Suggest movies based on viewing history
+- [ ] **User Watchlists** - Save movies to personal watch later lists
+- [ ] **Movie Reviews** - User rating and review system
+- [ ] **Advanced Filters** - Filter by year, rating, genre, language
+- [ ] **Full Video Streaming** - Actual movie playback beyond trailers
 
 ---
 
 ## 🐛 Troubleshooting
 
-### **Common Issues**
-
-**Frontend not connecting to backend:**
+### **TMDB API Issues**
 ```bash
-# Check if backend is running on correct port
-# Verify VITE_API_URL in frontend .env
-# Check CORS configuration in backend
+# API Key not working
+- Verify API key is correct in .env files
+- Check if API key is approved and active
+- Ensure no extra spaces in environment variables
+
+# Rate limit errors
+- TMDB allows 40 requests per 10 seconds
+- Implement request throttling if needed
+- Check API usage in TMDB dashboard
 ```
 
-**TMDB API errors:**
+### **Development Issues**
 ```bash
-# Verify API key is correct
-# Check API rate limits
-# Ensure internet connection for API calls
-```
+# Frontend not connecting to backend
+- Ensure backend is running on port 5000
+- Check VITE_API_URL in frontend .env
+- Verify CORS configuration allows frontend URL
 
-**Database connection issues:**
-```bash
-# Verify MongoDB is running
-# Check database URI format
-# Ensure database permissions
+# Database connection errors
+- Ensure MongoDB is running locally
+- Check MONGODB_URI format and credentials
+- Verify database permissions and network access
 ```
 
 ---
@@ -399,9 +403,9 @@ This project demonstrates proficiency in:
 
 ### **Development Guidelines**
 - Follow ESLint and Prettier configurations
-- Write meaningful commit messages
-- Add comments for complex logic
-- Test features before submitting PRs
+- Test TMDB API integrations thoroughly
+- Ensure responsive design on all devices
+- Add proper error handling for API failures
 - Update documentation for new features
 
 ---
@@ -427,6 +431,6 @@ Project Link: [https://github.com/Nashid-k/netflix-clone](https://github.com/Nas
 - **React Community** for excellent documentation and resources
 - **TailwindCSS** for the utility-first CSS framework
 - **Vite** for the blazing-fast development experience
-- **MongoDB** for the flexible document database
+- **YouTube** for trailer integration capabilities
 
 ---
