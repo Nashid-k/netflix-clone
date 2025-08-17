@@ -1,25 +1,23 @@
 {
-  "name": "netflix-clone",
+  "name": "netflix-backend",
   "version": "1.0.0",
-  "main": "backend/sever.js",
+  "main": "server.js",
   "type": "module",
-    "start": "node server.js",  
+  "scripts": {
+    "start": "node server.js",
     "dev": "nodemon server.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Backend API for Netflix Clone",
   "dependencies": {
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
-    "framer-motion": "^11.15.0",
     "jsonwebtoken": "^9.0.2",
-    "lucide-react": "^0.469.0",
-    "mongoose": "^8.9.2",
-    "react-hot-toast": "^2.4.1"
+    "mongoose": "^8.9.2"
   }
 }
